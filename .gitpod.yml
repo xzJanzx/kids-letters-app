@@ -1,0 +1,28 @@
+image: gitpod/workspace-full
+
+tasks:
+  - init: |
+      sudo apt-get update
+      sudo apt-get install -y unzip xz-utils libglu1-mesa git curl
+      git clone https://github.com/flutter/flutter.git -b stable --depth 1
+      echo 'export PATH="$PWD/flutter/bin:$PATH"' >> ~/.bashrc
+      export PATH="$PWD/flutter/bin:$PATH"
+      flutter --version || true
+
+    command: |
+      export PATH="$PWD/flutter/bin:$PATH"
+      if [ ! -f pubspec.yaml ]; then
+        flutter create .
+        git add -A && git commit -m "Create flutter project" || true
+      fi
+      flutter pub get
+      flutter run -d web-server --web-hostname=0.0.0.0 --web-port=8080
+
+ports:
+  - port: 8080
+    onOpen: open-preview
+
+vscode:
+  extensions:
+    - Dart-Code.flutter
+    - Dart-Code.dart-code
